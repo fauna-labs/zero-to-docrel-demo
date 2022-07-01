@@ -22,5 +22,21 @@ This is the sample project as showned in the weekly live webinar.
   | Classic      | `db.fauna.com`    |
 * Run the queries:
   ```
-  node query1.js
+  > zero-to-docrel-demo % node query1.js                
+  {
+    data: [
+      {
+        status: 'processing',
+        customer: { firstName: 'Carol', lastName: 'Clark' }
+      },
+      {
+        status: 'processing',
+        customer: { firstName: 'Bob', lastName: 'Brown' }
+      },
+      {
+        status: 'processing',
+        customer: { firstName: 'Alice', lastName: 'Appleseed' }
+      }
+    ]
+  }
   ```
