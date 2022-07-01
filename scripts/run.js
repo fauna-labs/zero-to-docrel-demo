@@ -1,4 +1,5 @@
 import faunadb from 'faunadb';
+import 'dotenv/config';
 import { customers, stores, products, orders} from './data.js';
 
 const client = new faunadb.Client({

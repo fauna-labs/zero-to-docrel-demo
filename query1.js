@@ -11,9 +11,6 @@ const client = new faunadb.Client({
 const q = faunadb.query;
 const { Map, Paginate, Match, Index, Lambda, Select, Get, Var } = q;
 
-function foo() {
-  return Select(["data", "firstName"], Get(Select(["data", "customer"], Get(Var("x")))))
-}
 const res = await client.query( 
   Map(
     Paginate(Match(Index("orders_by_status"), "processing")),
