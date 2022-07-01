@@ -1,0 +1,50 @@
+type customers {
+  lastName: String!
+  firstName: String!
+  creditCard: CreditCard!
+  address: Address!
+  telephone: String!
+}
+
+type stores {
+  name: String!
+  address: Address
+}
+
+type products {
+  name: String!
+  quantity: Int!
+  backorderLimit: Int!
+  description: String!
+  price: Float!
+  store: stores!
+  backordered: Boolean!
+}
+
+type orders {
+  shipDate: Time
+  cart: [ProductCart!]!
+  shipAddress: Address!
+  creditCard: CreditCard!
+  status: String!
+  customer: customers!
+  creationDate: Time!
+}
+
+type CreditCard @embedded {
+  network: String!
+  number: String!
+}
+
+type Address @embedded {
+  street: String
+  city: String
+  state: String
+  zipCode: String
+}
+
+type ProductCart @embedded {
+  product: products!
+  quantity: Int!
+  price: Float!
+}
