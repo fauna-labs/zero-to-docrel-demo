@@ -22,7 +22,7 @@ This is the sample project as showned in the weekly live webinar.
   | Classic      | `db.fauna.com`    |
 * Run the queries:
   ```
-  > zero-to-docrel-demo % node query1.js                
+  > node query1.js                
   {
     data: [
       {
