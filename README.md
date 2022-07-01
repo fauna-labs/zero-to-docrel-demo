@@ -1,5 +1,5 @@
 # Weekly live webinar: Introduction to Fauna in 45 minutes
-This is the sample project as showned in the weekly live webinar.
+This is the sample project as demonstrated in the weekly live webinar.
 
 ![img](images/signup-page.png)
 
