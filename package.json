@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.1",
-    "faunadb": "^4.5.4"
+    "fauna": "^0.6.2",
+    "faunadb": "^4.8.0"
   },
   "type": "module"
 }

@@ -1,21 +1,17 @@
-import { newConsoleLog } from './utils/newconsolelog.js';
-console.log = newConsoleLog;
 import 'dotenv/config';
-import faunadb from 'faunadb';
+import { Client, fql } from "fauna";
 
-const client = new faunadb.Client({
+const client = new Client({
   secret: process.env.FAUNADB_SECRET,
-  domain: process.env.FAUNADB_DOMAIN
 });
 
-const q = faunadb.query;
-const { Login, Ref, Collection } = q;
+try {
+  const query = fql`
+    Credentials.byDocument(customers.byId("101")).login("Fauna123")
+  `;
+  const res = await client.query(query);
 
-const res = await client.query( 
-  Login(
-    Ref(Collection("customers"), "101"), 
-    { password: "Fauna123" }
-  )
-);
-
-console.log(res);
+  console.log(res.data);
+} catch (err) {
+  console.log(err)
+}

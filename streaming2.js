@@ -4,8 +4,7 @@ import 'dotenv/config';
 import faunadb from 'faunadb';
 
 const client = new faunadb.Client({
-  secret: process.env.FAUNADB_SECRET,
-  domain: process.env.FAUNADB_DOMAIN
+  secret: process.env.FAUNADB_SECRET
 });
 
 const q = faunadb.query;

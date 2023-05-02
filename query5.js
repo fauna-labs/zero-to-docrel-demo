@@ -1,47 +1,38 @@
-import { newConsoleLog } from './utils/newconsolelog.js';
-console.log = newConsoleLog;
 import 'dotenv/config';
-import faunadb from 'faunadb';
+import { Client, fql } from "fauna";
 
-const client = new faunadb.Client({
+const client = new Client({
   secret: process.env.FAUNADB_SECRET,
-  domain: process.env.FAUNADB_DOMAIN
 });
 
-const q = faunadb.query;
-const { Login, Ref, Collection, Map, Paginate, Match, Index, Lambda, Select, Get, Var } = q;
-
-let res = await client.query( 
-  Login(
-    Ref(Collection("customers"), "101"), 
-    {
-      password: "Fauna123"
+try {
+  const customerId = "101"
+  const password = "Fauna123"
+  const query = fql`
+    Credentials.byDocument(customers.byId(${customerId})).login(${password}) {
+      secret      
     }
-  )
-);
+  `;
+  const res = await client.query(query);
+  
+  const client2 = new Client({
+    secret: res.data.secret //-----USE SECRET FROM LOGIN-----//
+  });
 
-const client2 = new faunadb.Client({
-  secret: res.secret, //-----USE SECRET FROM LOGIN-----//
-  domain: process.env.FAUNADB_DOMAIN
-});
-
-client2.query( 
-  Map(
-    Paginate(Match(Index("orders_by_status"), "processing")),
-    Lambda("x", 
-      {
-        status: Select(["data", "status"], Get(Var("x"))),
-        customer: {
-          firstName: Select(["data", "firstName"], Get(Select(["data", "customer"], Get(Var("x"))))),
-          lastName: Select(["data", "lastName"], Get(Select(["data", "customer"], Get(Var("x")))))
-        }
+  const query2 = fql`
+    orders.byStatus("processing") {
+      id,
+      status,
+      customer {
+        firstName,
+        lastName
       }
-    )
-  )  
-)
-.then(res => {
-  console.log(res);
-})
-.catch(err => {
-  console.log(err.requestResult.responseContent);
-})
+    }
+  `;
+  const res2 = await client2.query(query2);
+  console.log(res2.data.data)
+} catch(err) {
+  console.log(err)  
+}
+
+

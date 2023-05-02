@@ -48,3 +48,16 @@ type ProductCart @embedded {
   quantity: Int!
   price: Float!
 }
+
+# type Query {
+#   ordersByStatus(status: String!): [orders!]
+# }
+
+# type Mutation {
+#   submitOrder(customerId: String! cart: [productInput!]): order! @resolver(name: submitorder)
+# }
+
+# input productInput {
+#   productId: String!
+#   quantity: Int!
+# }
