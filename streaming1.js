@@ -11,7 +11,7 @@ const q = faunadb.query;
 const { Ref, Collection } = q;
 
 client.stream.document(
-  Ref(Collection("customers"), "101")
+  Ref(Collection("customer"), "101")
 )
 .on('version', v => { console.log(v) })
 .start()

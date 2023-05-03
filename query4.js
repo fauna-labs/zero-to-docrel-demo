@@ -7,7 +7,7 @@ const client = new Client({
 
 try {
   const query = fql`
-    Credentials.byDocument(customers.byId("101")).login("Fauna123")
+    Credentials.byDocument(customer.byId("101")).login("Fauna123")
   `;
   const res = await client.query(query);
 

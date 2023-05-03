@@ -11,7 +11,7 @@ const q = faunadb.query;
 const { Match, Index } = q;
 
 client.stream(
-  Match(Index("orders_by_status"), "processing")
+  Match(Index("ordersByStatus"), "processing")
 )
 .on('set', s => { console.log(s) })
 .start()

@@ -9,7 +9,7 @@ try {
   const customerId = "101"
   const password = "Fauna123"
   const query = fql`
-    Credentials.byDocument(customers.byId(${customerId})).login(${password}) {
+    Credentials.byDocument(customer.byId(${customerId})).login(${password}) {
       secret      
     }
   `;
@@ -20,7 +20,7 @@ try {
   });
 
   const query2 = fql`
-    orders.byStatus("processing") {
+    order.byStatus("processing") {
       id,
       status,
       customer {

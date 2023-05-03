@@ -1,7 +1,7 @@
-import { fql, Module } from "fauna";
+import { fql } from "fauna";
 
 const customers = {
-  coll: fql`customers`,
+  coll: fql`customer`,
   data: [
   {
     id: "101",
@@ -55,7 +55,7 @@ const customers = {
 
 
 const stores = {
-  coll: fql`stores`,
+  coll: fql`store`,
   data: [
   {
     id: "301",
@@ -90,7 +90,7 @@ const stores = {
 ]}
 
 const products = {
-  coll: fql`products`,
+  coll: fql`product`,
   data: [
   {
     id: "201",
@@ -185,12 +185,13 @@ const products = {
 ]}
 
 const orders = {
-  coll: fql`orders`,
+  coll: fql`order`,
   data: [
   {
     id: "1001",
+    name: "Order 1001",
     customer: "103",
-    cart: [
+    orderProducts: [
       {
         product: "201",
         quantity: 25,
@@ -217,8 +218,9 @@ const orders = {
   },
   {
     id: "1002",
+    name: "Order 1002",
     customer: "102",
-    cart: [
+    orderProducts: [
       {
         product: "203",
         quantity: 15,
@@ -245,8 +247,9 @@ const orders = {
   },
   {
     id: "1003",
+    name: "Order 1003",
     customer: "101",
-    cart: [
+    orderProducts: [
       {
         product: "204",
         quantity: 10,

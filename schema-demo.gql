@@ -1,4 +1,4 @@
-type customers {
+type customer {
   lastName: String!
   firstName: String!
   creditCard: CreditCard!
@@ -6,28 +6,29 @@ type customers {
   telephone: String!
 }
 
-type stores {
+type store {
   name: String!
   address: Address
 }
 
-type products {
+type product {
   name: String!
   quantity: Int!
   backorderLimit: Int!
   description: String!
   price: Float!
-  store: stores!
+  store: store!
   backordered: Boolean!
 }
 
-type orders {
+type order {
+  name: String!
   shipDate: Time
   cart: [ProductCart!]!
   shipAddress: Address!
   creditCard: CreditCard!
   status: String!
-  customer: customers!
+  customer: customer!
   creationDate: Time!
 }
 
@@ -44,7 +45,11 @@ type Address @embedded {
 }
 
 type ProductCart @embedded {
-  product: products!
+  product: product!
   quantity: Int!
   price: Float!
+}
+
+type Query {
+  ordersByStatus(status: String!): [order!]
 }

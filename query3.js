@@ -8,7 +8,7 @@ const client = new Client({
 try {
   const query = fql`
     Credentials.create({
-      document: customers.byId("101"),
+      document: customer.byId("101"),
       password: "Fauna123"
     })
   `;

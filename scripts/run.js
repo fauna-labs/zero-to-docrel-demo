@@ -16,21 +16,23 @@ async function createDocument(collection, data) {
         })
       }
     `)
+
     let postProcess = fql`newdoc.id`;
-    if (collection == 'products') {
+
+    if (collection == 'product') {
       postProcess = fql`
         ${data.coll}.byId(newdoc.id).update({
-          store: stores.byId(newdoc.store)
+          store: store.byId(newdoc.store)
         })
       `
     }
-    if (collection == 'orders') {
+    else if (collection == 'order') {
       postProcess = fql`
         ${data.coll}.byId(newdoc.id).update({
-          customer: customers.byId(newdoc.customer),
+          customer: customer.byId(newdoc.customer),
           creationDate: Time(newdoc.creationDate),
-          cart: newdoc.cart.map(x=>{
-            Object.assign(x, { product: products.byId(x.product) })
+          orderProducts: newdoc.orderProducts.map(x=>{
+            Object.assign(x, { product: product.byId(x.product) })
           })
         })
       `
@@ -52,9 +54,9 @@ async function createDocument(collection, data) {
 
 
 
-await createDocument("customers", customers);
-await createDocument("stores", stores);
-await createDocument("products", products);
-await createDocument("orders", orders);
+await createDocument("customer", customers);
+await createDocument("store", stores);
+await createDocument("product", products);
+await createDocument("order", orders);
 
 

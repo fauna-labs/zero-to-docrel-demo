@@ -14,7 +14,7 @@ const cart = [
 try {
   const query = fql`
     ${cart}.forEach(x=>{              
-      let p = products.byId(x.productId)
+      let p = product.byId(x.productId)
       let updatedQty = p.quantity - x.quantity
 
       if (updatedQty < 0) {                  
@@ -27,14 +27,17 @@ try {
       }
     })
     
-    orders.create({
-      customer: customers.byId(${customerId}),
+    let newId = newId().toString()
+    order.create({
+      id: newId,
+      name: "Order " + newId,
+      customer: customer.byId(${customerId}),
       creationDate: Time.now(),
       status: 'processing',
       orderProducts: ${cart}.map(x=>{
-        product: products.byId(x.productId),
+        product: product.byId(x.productId),
         quantity: x.quantity,
-        price: products.byId(x.productId).price
+        price: product.byId(x.productId).price
       })
     }) {
       id,
