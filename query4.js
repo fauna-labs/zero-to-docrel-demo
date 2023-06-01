@@ -6,8 +6,10 @@ const client = new Client({
 });
 
 try {
+  const customerId = "101"
+  const pwd = "Fauna123"
   const query = fql`
-    Credentials.byDocument(customer.byId("101")).login("Fauna123")
+    Credentials.byDocument(customer.byId(${customerId})).login(${pwd})
   `;
   const res = await client.query(query);
 

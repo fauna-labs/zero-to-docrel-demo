@@ -22,23 +22,25 @@ try {
       } else {
         p.update({
           quantity: updatedQty,
-          backordered: p.backorderLimit > updatedQty
+          backordered: p.backorderedLimit > updatedQty
         })
       }
     })
     
-    let newId = newId().toString()
+    let cust = customer.byId(${customerId})
+
     order.create({
-      id: newId,
-      name: "Order " + newId,
-      customer: customer.byId(${customerId}),
+      name: "Order for " + cust.firstName,
+      customer: cust,
       creationDate: Time.now(),
       status: 'processing',
       orderProducts: ${cart}.map(x=>{
         product: product.byId(x.productId),
         quantity: x.quantity,
         price: product.byId(x.productId).price
-      })
+      }),
+      deliveryAdress: cust.address,
+      creditCard: cust.creditCard
     }) {
       id,
       creationDate

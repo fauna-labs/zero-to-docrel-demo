@@ -36,3 +36,27 @@ try {
 }
 
 
+
+
+
+
+
+
+// ----------------------------------------------------------------------------------------------------------------
+// create this role
+const role = fql`
+Role.create({
+  name: "myRole",
+  membership: {
+    resource: "customer"
+  },
+  privileges: [
+    {
+      resource: "order",
+      actions: {
+        read: true
+      }
+    }
+  ]
+})
+`

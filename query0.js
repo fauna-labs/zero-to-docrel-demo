@@ -1,9 +1,6 @@
-// import { newConsoleLog } from './utils/newconsolelog.js';
-// console.log = newConsoleLog;
 import 'dotenv/config';
 
 import { Client, fql } from "fauna";
-
 
 const client = new Client({ 
   secret: process.env.FAUNADB_SECRET
@@ -12,10 +9,10 @@ const client = new Client({
 try {
   const res = await client.query(
     fql`
-
+    order.all()
     `
   );
-  console.log(res.data);
+  console.log(JSON.stringify(res.data, null, 2));
 } catch (err) {
   console.log(err)
 }
