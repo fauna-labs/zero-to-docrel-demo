@@ -99,7 +99,7 @@ const products = {
     price: 6.98,
     quantity: 100,
     store: "302",
-    backorderLimit: 5,
+    backorderedLimit: 5,
     backordered: false
   },
   {
@@ -109,7 +109,7 @@ const products = {
     price: 24.99,
     quantity: 20,
     store: "302",
-    backorderLimit: 10,
+    backorderedLimit: 10,
     backordered: false
   },
   {
@@ -119,7 +119,7 @@ const products = {
     price: 4.99,
     quantity: 100,
     store: "303",
-    backorderLimit: 15,
+    backorderedLimit: 15,
     backordered: false
   },
   {
@@ -129,7 +129,7 @@ const products = {
     price: 3.99,
     quantity: 1000,
     store: "301",
-    backorderLimit: 15,
+    backorderedLimit: 15,
     backordered: false
   },
   {
@@ -139,7 +139,7 @@ const products = {
     price: 0.35,
     quantity: 1000,
     store: "301",
-    backorderLimit: 15,
+    backorderedLimit: 15,
     backordered: false
   },
   {
@@ -149,7 +149,7 @@ const products = {
     price: 3.49,
     quantity: 50,
     store: "301",
-    backorderLimit: 15,
+    backorderedLimit: 15,
     backordered: false
   },
   {
@@ -159,7 +159,7 @@ const products = {
     price: 2.99,
     quantity: 30,
     store: "303",
-    backorderLimit: 15,
+    backorderedLimit: 15,
     backordered: false
   },
   {
@@ -169,7 +169,7 @@ const products = {
     price: 1.49,
     quantity: 100,
     store: "301",
-    backorderLimit: 15,
+    backorderedLimit: 15,
     backordered: false
   },
   {
@@ -179,7 +179,7 @@ const products = {
     price: 23.99,
     quantity: 10,
     store: "302",
-    backorderLimit: 10,
+    backorderedLimit: 10,
     backordered: false
   }
 ]}

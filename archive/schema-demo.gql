@@ -14,7 +14,7 @@ type store {
 type product {
   name: String!
   quantity: Int!
-  backorderLimit: Int!
+  backorderedLimit: Int!
   description: String!
   price: Float!
   store: store!
@@ -50,16 +50,6 @@ type ProductCart @embedded {
   price: Float!
 }
 
-
-# type Query {
-#   ordersByStatus(status: String!): [order!]
-# }
-
-# type Mutation {
-#   submitOrder(customerId: String! cart: [productInput!]): order! @resolver(name: submitorder)
-# }
-
-# input productInput {
-#   productId: String!
-#   quantity: Int!
-# }
+type Query {
+  ordersByStatus(status: String!): [order!]
+}

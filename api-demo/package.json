@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.115",
+    "serverless-offline": "^12.0.4",
+    "serverless-plugin-typescript": "^2.1.4",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "algoliasearch": "^4.17.0",
+    "aws-auth-policy": "^0.1.0",
+    "fauna": "^0.7.1",
+    "jsonwebtoken": "^9.0.0",
+    "jwks-rsa": "^3.0.1"
+  }
+}

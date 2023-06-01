@@ -1,0 +1,56 @@
+# Copyright Fauna, Inc.
+# SPDX-License-Identifier: MIT-0
+
+service: sls-fauna-demo
+frameworkVersion: '3'
+ 
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+custom:
+  env: ${file(./.env.json)}
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  runtime: nodejs18.x
+  profile: ${self:custom.env.AWS_PROFILE}
+  region: ${self:custom.env.AWS_REGION}
+  stage: ${self:custom.env.ENVIRONMENT}
+  environment:
+    FAUNA_API_KEY: ${self:custom.env.FAUNA_API_KEY}
+  httpApi:
+    cors: true
+
+functions:
+  hello:
+    handler: index.handler
+    events:
+      - httpApi:
+          path: /
+          method: GET
+  createProduct:
+    handler: ProductService/productservice.createProduct
+    events:
+      - httpApi:
+          path: /product
+          method: POST
+  getProducts:
+    handler: ProductService/productservice.getProducts
+    events:
+      - httpApi:
+          path: /products
+          method: GET
+  getOrders:
+    handler: OrderService/orderservice.getOrders
+    events:
+      - httpApi:
+          path: /orders
+          method: GET
+  createOrder:
+    handler: OrderService/orderservice.createOrder
+    events:
+      - httpApi:
+          path: /order
+          method: POST

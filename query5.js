@@ -20,14 +20,7 @@ try {
   });
 
   const query2 = fql`
-    order.byStatus("processing") {
-      id,
-      status,
-      customer {
-        firstName,
-        lastName
-      }
-    }
+    order.all()
   `;
   const res2 = await client2.query(query2);
   console.log(res2.data.data)
