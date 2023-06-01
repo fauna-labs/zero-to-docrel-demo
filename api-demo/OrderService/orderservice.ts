@@ -32,8 +32,10 @@ const createOrder: Handler = async (event: any, context: Context, callback: Call
         if (x.quantity > p.quantity) {
           abort(p.name + " does not have enough stock to fullfill qty: " + x.quantity)
         } else {
+          let updatedQty = p.quantity - x.quantity
           p.update({
-            quantity: p.quantity - x.quantity
+            quantity: updatedQty,
+            backordered: if (updatedQty < p.backorderedLimit) true else false
           })
         }
       })
