@@ -9,7 +9,9 @@ const client = new Client({
 try {
   const res = await client.query(
     fql`
-    order.all()
+    order.all() {
+      name
+    }
     `
   );
   console.log(JSON.stringify(res.data, null, 2));

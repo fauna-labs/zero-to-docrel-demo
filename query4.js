@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Client, fql } from "fauna";
 
 const client = new Client({
-  secret: process.env.FAUNADB_SECRET,
+  secret: process.env.FAUNADB_SECRET
 });
 
 try {
