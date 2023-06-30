@@ -24,8 +24,6 @@ SPDX-License-Identifier: MIT-0
             <input type="text"
               class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring"
               placeholder="Search"
-              v-model="searchTerms"
-              v-on:keyup="searchOrders"
               />
           </div>
           <div class="relative ml-2">
@@ -88,7 +86,7 @@ import CartItem from '../components/CartItem.vue';
 import ProgressBar from '@/components/ProgressBar.vue';
 import Button from '@/components/Button.vue';
 import Order from '@/components/Order.vue';
-import { registerRuntimeCompiler } from 'vue';
+import { Client, fql } from 'fauna';
 
 export default {
   name: 'orders',
@@ -111,59 +109,72 @@ export default {
   },
   async mounted() {
     this.token = await this.$auth0.getAccessTokenSilently();
-    this.loadMyOrders();
+    this.getOrders();
   },
   methods: {
-    async loadMyOrders() {
+    async getOrders() {
       this.progress = true;
 
-      fetch(
-        `${import.meta.env.VITE_APP_APIGATEWAYURL}/orders`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${this.token}`
-        }
-      })
-        .then(res => {
-          if (!res.ok) {
-            this.progress = false;
+      try {
+        const client = new Client({
+          secret: this.token
+        });
+        const res = await client.query(fql`
+        order.all().map(o=>{
+          let orderProducts = if (o.orderProducts != null) {
+            o.orderProducts.map(x=>{
+                price: x.price,
+                quantity: x.quantity,
+                productId: x.product.id,
+                productName: x.product.name,
+                productSku: x.product.sku,
+                productDescription: x.product.description
+              })  
           } else {
-            return res.json();
+            null
+          }
+          {
+            id: o.id,
+            orderName: o.orderName,
+            creationDate: o.creationDate,
+            status: o.status,
+            orderProducts: orderProducts
           }
         })
-        .then(data => {
-          data = data.map(x => {
-            const cart = x.orderProducts;
-            let total = 0;
+        `);
+        client.close();
+
+        let data = res.data.data;
+      
+        data.map(x => {
+          const cart = x.orderProducts;
+          let total = 0;
+          if (cart) {
             for (const p of cart) {
               total += p.price * p.quantity;
             }
             x.total = total.toFixed(2);
+          }
+          if (x.creationDate) {
+            x.orderPlaced = new Date(x.creationDate.isoString).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
+          }
+          return x;
+        });
+        // sort descending
+        data.sort((a, b)=>{ return (b.id > a.id) ? 1 : -1 });
 
-            if (x.creationDate) {
-              x.orderPlaced = new Date(x.creationDate.isoString).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
-            }
-            return x;
-          });
-
-          // sort descending
-          data.sort((a, b)=>{ return (b.id > a.id) ? 1 : -1 });
-
-          this.orders = data;
-
-          this.progress = false;
-        })
-        .catch(e => {
-          console.log('ERR: ', e);
-          this.progress = false;
-        })
+        this.orders = data;
+      } catch(e) {
+        console.log(e);
+      }
+      this.progress = false;
     },
     tbd() {
       alert('nothing to see yet');
     },
     orderAdded() {
       this.addOrUpdateOrder = false;
-      this.loadMyOrders();
+      this.getOrders();
     },
     showAddOrder() {
       if (this.progress) {
@@ -175,75 +186,7 @@ export default {
     viewOrder(order) {
       this.addOrUpdateOrder = true;
       this.selectedOrder = order;
-    },
-    async searchOrders() {
-      if (this.typingDelayTimer) clearTimeout(this.typingDelayTimer);
-
-      const self = this;
-      this.typingDelayTimer = setTimeout(() => {
-        if (!self.searchTerms || self.searchTerms.length <= 0) {
-          this.loadMyOrders();
-          return;
-        }
-
-        self.progress = true;
-
-        fetch(
-          `${import.meta.env.VITE_APP_APIGATEWAYURL}/orders?search=${self.searchTerms}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${this.token}`
-          }
-        })
-        .then(res => {
-          if (!res.ok) {
-            self.progress = false;
-          } else {
-            return res.json();
-          }
-        })
-        .then(data => {
-          data = data.map(x => {
-            const cart = x.orderProducts.map(p=>{
-              return {
-                productId: p.product.id,
-                productName: p.product.name,
-                productSku: p.product.sku,
-                productDescription: p.product.description,
-                price: p.price,
-                quantity: p.quantity
-              }
-            })
-            x.orderProducts = cart;
-
-            let total = 0;
-            for (const p of cart) {
-              total += p.price * p.quantity;
-            }
-            x.total = total.toFixed(2);
-
-            if (x.creationDate) {
-              x.orderPlaced = new Date(x.creationDate.isoString).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
-            }
-            return x;
-          });
-
-          // sort descending
-          data.sort((a, b)=>{ return (b.id > a.id) ? 1 : -1 });
-
-          self.orders = data;
-
-          self.progress = false;
-        })
-        .catch(e => {
-          console.log('ERR: ', e);
-          self.progress = false;
-        })
-        
-
-      }, 300)
     }
-
   }
 }
 </script>

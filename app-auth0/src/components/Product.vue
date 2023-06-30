@@ -93,6 +93,7 @@ SPDX-License-Identifier: MIT-0
 <script>
 import ProgressBar from '@/components/ProgressBar.vue';
 import Button from '@/components/Button.vue';
+import { Client, fql } from 'fauna';
 
 export default {
   name: 'product',
@@ -141,30 +142,34 @@ export default {
       }
       this.progress = true;
 
-      this.url = `${import.meta.env.VITE_APP_APIGATEWAYURL}/product`;
-      this.apimethod = 'POST';
-      if (this.updateMode) {
-        this.url += `/${this.product.id}`;
-        this.apimethod = 'PUT';
+      const query = fql`
+      product.create({
+        'sku': ${this.sku},
+        'name': ${this.productName},
+        'description': ${this.description},
+        'price': ${this.price},
+        'quantity': ${this.quantity},
+        'backorderedLimit': ${this.backorderedLimit},
+        'backordered': ${this.quantity < this.backorderedLimit ? true : false}
+      }) {
+        objectID: .id,
+        sku,
+        name,
+        description,
+        price,
+        quantity,
+        backorderedLimit,
+        backordered
       }
-      const token = await this.$auth0.getAccessTokenSilently();
-      const res = await fetch(
-        this.url, {
-        method: this.apimethod,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          name: this.productName,
-          price: this.price,
-          sku: this.sku,
-          description: this.description,
-          quantity: this.quantity,
-          backorderedLimit: this.backorderedLimit
-        })        
-      });
+      `
+      try {
+        const client = new Client({
+          secret: await this.$auth0.getAccessTokenSilently()
+        });
+        const res = await client.query(query);
+      } catch(e) {
+        console.log(e);
+      }
       this.exit();
     }
   }

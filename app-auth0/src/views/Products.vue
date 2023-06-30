@@ -20,7 +20,7 @@ SPDX-License-Identifier: MIT-0
 
           <input type="text"
             class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring"
-            placeholder="Search" v-model="searchTerms" v-on:keyup="searchProducts" />
+            placeholder="Search"/>
         </div>
         <div class="relative ml-2">
           <Button label="Add Product" :inactive="progress" @click="showAddProduct" />
@@ -82,6 +82,7 @@ SPDX-License-Identifier: MIT-0
 import ProgressBar from '@/components/ProgressBar.vue';
 import Product from '@/components/Product.vue';
 import Button from '@/components/Button.vue';
+import { Client, fql } from 'fauna';
 
 export default {
   name: 'products',
@@ -102,36 +103,35 @@ export default {
     }
   },
   methods: {
-    async listProducts() {
+    async getProducts() {
       this.progress = true;
 
-      fetch(
-        `${import.meta.env.VITE_APP_APIGATEWAYURL}/products`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${this.token}`,
-        }        
-      })
-        .then(res => {
-          if (!res.ok) {
-            this.progress = false;
-          } else {
-            return res.json();
-          }
+      try {
+        const client = new Client({
+          secret: this.token
         })
-        .then(data => {
-          this.products = data;
-          this.progress = false;
-        })
-        .catch(e => {
-          console.log('ERR: ', e);
-          this.progress = false;
-        })
-
+        const res = await client.query(fql`
+        product.all() {
+          id,
+          name,
+          description,
+          sku,
+          price,
+          quantity,
+          backorderedLimit,
+          backordered
+        }      
+        `);
+        client.close();
+        this.products = res.data.data;
+      } catch(e) {
+        console.log('ERR: ', e);
+      }
+      this.progress = false;
     },
     productAdded() {
       this.addOrUpdateProduct = false;
-      this.listProducts();
+      this.getProducts();
     },
     showAddProduct() {
       if (this.progress) {
@@ -144,46 +144,10 @@ export default {
       this.addOrUpdateProduct = true;
       this.selectedProduct = product;
     },
-    searchProducts() {
-      if (this.typingDelayTimer) clearTimeout(this.typingDelayTimer);
-
-      const self = this;
-      this.typingDelayTimer = setTimeout(async () => {
-        if (!self.searchTerms || self.searchTerms.length <= 0) {
-          self.listProducts();
-          return;
-        }
-
-        self.progress = true;
-        fetch(
-          `${import.meta.env.VITE_APP_APIGATEWAYURL}/products?search=${self.searchTerms}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${this.token}`
-          }
-        })
-          .then(res => {
-            if (!res.ok) {
-              self.progress = false;
-            } else {
-              return res.json();
-            }
-          })
-          .then(data => {
-            self.products = data;
-            self.progress = false;
-          })
-          .catch(e => {
-            console.log('ERR: ', e);
-            self.progress = false;
-          })
-
-      }, 300)
-    }
   },
   async mounted() {
     this.token = await this.$auth0.getAccessTokenSilently();
-    this.listProducts();
+    this.getProducts();
   }
 }
 </script>

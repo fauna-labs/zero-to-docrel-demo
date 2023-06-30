@@ -113,6 +113,7 @@ input[type=number]{
 <script>
 import ProgressBar from '@/components/ProgressBar.vue';
 import Button from '@/components/Button.vue';
+import { Client, fql } from 'fauna';
 
 export default {
   name: 'order',
@@ -158,19 +159,26 @@ export default {
     },
     async loadProducts() {
       this.loadingProducts = true;
-      const token = await this.$auth0.getAccessTokenSilently();
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_APP_APIGATEWAYURL}/products`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-        });
-        this.products = await res.json();
+        const client = new Client({
+          secret: await this.$auth0.getAccessTokenSilently()
+        })
+        const res = await client.query(fql`
+        product.all() {
+          id,
+          name,
+          description,
+          sku,
+          price,
+          quantity,
+          backorderedLimit,
+          backordered
+        }      
+        `);
+        client.close();
+        this.products = res.data.data;
       } catch(e) {
-        alert(e);
-        this.loadingProducts = false;
+        console.log('ERR: ', e);
       }
       this.loadingProducts = false;
     },
@@ -195,36 +203,52 @@ export default {
 
       this.progress = true;
 
-      let newOrder = {
-        orderName: this.orderName,
-        orderProducts: orderProducts
-      }
+      const query = fql`
+      let cart = ${orderProducts}
 
-      this.url = `${import.meta.env.VITE_APP_APIGATEWAYURL}/order`;
-      this.apimethod = 'POST';
-      if (this.updateMode) {
-        this.url += `/${this.product.id}`;
-        this.apimethod = 'PUT';
+      cart.forEach(x=>{
+        let p = product.byId(x.productId)
+        if (x.quantity > p.quantity) {
+          abort(p.name + " does not have enough stock to fullfill qty: " + x.quantity)
+        } else {
+          let updatedQty = p.quantity - x.quantity
+          p.update({
+            quantity: updatedQty,
+            backordered: if (updatedQty < p.backorderedLimit) true else false
+          })
+        }
+      })
+
+      let orderProducts = cart.map(x=>{
+        product: product.byId(x.productId),
+        quantity: x.quantity,
+        price: x.price
+      })
+
+      order.create({
+        orderName: ${this.orderName},
+        creationDate: Time.now(),
+        status: "processing",
+        orderProducts: orderProducts
+      }) {
+        objectID: .id,
+        orderName,
+        status,
+        orderProducts
       }
-      const token = await this.$auth0.getAccessTokenSilently();
+      `
       try {
-        const res = await fetch(
-          this.url, {
-          method: this.apimethod,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(newOrder)        
+        const client = new Client({
+          secret: await this.$auth0.getAccessTokenSilently()
         });
-        if (!res.ok) {
-          alert(await res.text());
+        const res = await client.query(query);
+      } catch(e) {
+        console.log(e);
+        if (e.abort) {
+          alert(e.abort);
           this.progress = false;
           return;
         }
-      } catch(e) {
-        console.log(e)
       }
       this.exit();
     }
