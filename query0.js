@@ -14,6 +14,7 @@ try {
     }
     `
   );
+  client.close();
   console.log(JSON.stringify(res.data, null, 2));
 } catch (err) {
   console.log(err)

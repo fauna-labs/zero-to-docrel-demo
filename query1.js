@@ -6,8 +6,9 @@ const client = new Client({
 });
 
 try {
+  const status = "processing";
   const query = fql`
-    order.byStatus("processing") {
+    order.byStatus(${status}) {
       id,
       status,
       customer {
