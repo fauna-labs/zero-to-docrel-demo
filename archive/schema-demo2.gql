@@ -1,0 +1,65 @@
+type customer {
+  lastName: String!
+  firstName: String!
+  creditCard: CreditCard!
+  address: Address!
+  telephone: String!
+}
+
+type store {
+  name: String!
+  address: Address
+}
+
+type product {
+  name: String!
+  quantity: Int!
+  backorderedLimit: Int!
+  description: String!
+  price: Float!
+  store: store!
+  backordered: Boolean!
+}
+
+type order {
+  name: String!
+  shipDate: Time
+  cart: [ProductCart!]!
+  shipAddress: Address!
+  creditCard: CreditCard!
+  status: String!
+  customer: customer!
+  creationDate: Time!
+}
+
+type CreditCard @embedded {
+  network: String!
+  number: String!
+}
+
+type Address @embedded {
+  street: String
+  city: String
+  state: String
+  zipCode: String
+}
+
+type ProductCart @embedded {
+  product: product!
+  quantity: Int!
+  price: Float!
+}
+
+
+# type Query {
+#   ordersByStatus(status: String!): [order!]
+# }
+
+# type Mutation {
+#   submitOrder(customerId: String! cart: [productInput!]): order! @resolver(name: submitorder)
+# }
+
+# input productInput {
+#   productId: String!
+#   quantity: Int!
+# }

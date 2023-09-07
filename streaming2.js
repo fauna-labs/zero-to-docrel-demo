@@ -4,15 +4,14 @@ import 'dotenv/config';
 import faunadb from 'faunadb';
 
 const client = new faunadb.Client({
-  secret: process.env.FAUNADB_SECRET,
-  domain: process.env.FAUNADB_DOMAIN
+  secret: process.env.FAUNADB_SECRET
 });
 
 const q = faunadb.query;
 const { Match, Index } = q;
 
 client.stream(
-  Match(Index("orders_by_status"), "processing")
+  Match(Index("ordersByStatus"), "processing")
 )
 .on('set', s => { console.log(s) })
 .start()

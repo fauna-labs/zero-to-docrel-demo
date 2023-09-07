@@ -1,29 +1,27 @@
-import { newConsoleLog } from './utils/newconsolelog.js';
-console.log = newConsoleLog;
 import 'dotenv/config';
-import faunadb from 'faunadb';
+import { Client, fql } from "fauna";
 
-const client = new faunadb.Client({
+const client = new Client({
   secret: process.env.FAUNADB_SECRET,
-  domain: process.env.FAUNADB_DOMAIN
 });
 
-const q = faunadb.query;
-const { Map, Paginate, Match, Index, Lambda, Select, Get, Var } = q;
-
-const res = await client.query( 
-  Map(
-    Paginate(Match(Index("orders_by_status"), "processing")),
-    Lambda("x", 
-      {
-        status: Select(["data", "status"], Get(Var("x"))),
-        customer: {
-          firstName: Select(["data", "firstName"], Get(Select(["data", "customer"], Get(Var("x"))))),
-          lastName: Select(["data", "lastName"], Get(Select(["data", "customer"], Get(Var("x")))))
-        }
+try {
+  const status = "processing";
+  const query = fql`
+    order.byStatus(${status}) {
+      id,
+      status,
+      customer {
+        firstName,
+        lastName
       }
-    )
-  )
-)
-console.log(res);
+    }
+  `;
+  const res = await client.query(query);
+
+  console.log(res.data.data);
+} catch (err) {
+  console.log(err)
+}
+
 
