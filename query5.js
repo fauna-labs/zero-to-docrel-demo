@@ -9,7 +9,7 @@ try {
   const customerId = "101"
   const password = "Fauna123"
   const query = fql`
-    Credentials.byDocument(customer.byId(${customerId})).login(${password}) {
+    Credentials.byDocument(customer.byId(${customerId}))!.login(${password}) {
       secret      
     }
   `;
@@ -27,29 +27,3 @@ try {
 } catch(err) {
   console.log(err)  
 }
-
-
-
-
-
-
-
-
-// ----------------------------------------------------------------------------------------------------------------
-// create this role
-const role = fql`
-Role.create({
-  name: "myRole",
-  membership: {
-    resource: "customer"
-  },
-  privileges: [
-    {
-      resource: "order",
-      actions: {
-        read: true
-      }
-    }
-  ]
-})
-`

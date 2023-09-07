@@ -14,11 +14,11 @@ const cart = [
 try {
   const query = fql`
     ${cart}.forEach(x=>{              
-      let p = product.byId(x.productId)
+      let p = product.byId(x.productId)!
       let updatedQty = p.quantity - x.quantity
 
       if (updatedQty < 0) {                  
-        abort("Insufficient stock for product " + p.name + ": Requested quantity=" + x.quantity)
+        abort("Insufficient stock for product " + p.name + ": Requested quantity=" + x.quantity.toString())
       } else {
         p.update({
           quantity: updatedQty,
@@ -27,7 +27,7 @@ try {
       }
     })
     
-    let cust = customer.byId(${customerId})
+    let cust = customer.byId(${customerId})!
 
     order.create({
       name: "Order for " + cust.firstName,
@@ -37,7 +37,7 @@ try {
       orderProducts: ${cart}.map(x=>{
         product: product.byId(x.productId),
         quantity: x.quantity,
-        price: product.byId(x.productId).price
+        price: product.byId(x.productId)!.price
       }),
       deliveryAdress: cust.address,
       creditCard: cust.creditCard

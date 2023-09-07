@@ -9,7 +9,7 @@ try {
   const customerId = "101"
   const pwd = "Fauna123"
   const query = fql`
-    Credentials.byDocument(customer.byId(${customerId})).login(${pwd})
+    Credentials.byDocument(customer.byId(${customerId}))!.login(${pwd})
   `;
   const res = await client.query(query);
 

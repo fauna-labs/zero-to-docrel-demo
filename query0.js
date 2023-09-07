@@ -9,13 +9,11 @@ const client = new Client({
 try {
   const res = await client.query(
     fql`
-    order.all() {
-      name
-    }
+    Collection.all()
     `
   );
   client.close();
-  console.log(JSON.stringify(res.data, null, 2));
+  console.log(JSON.stringify(res.data.after, null, 2));
 } catch (err) {
   console.log(err)
 }
