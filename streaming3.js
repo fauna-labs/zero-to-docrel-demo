@@ -13,6 +13,13 @@ const { Documents, Collection } = q;
 client.stream(
   Documents(Collection("customer"))
 )
-.on('set', s => { console.log(s) })
+.on('set', s => {
+  console.log(s);
+  if (s.action == 'add') {
+    client.stream.document(s.document.ref)
+    .on('version', v => { console.log(v) })
+    .start()
+  }
+})
 .start()
 

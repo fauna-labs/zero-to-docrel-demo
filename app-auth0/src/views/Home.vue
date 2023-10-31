@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT-0
   <div class="max-w-3xl">
     <div v-if="jwt">
       <h2 class="text-2xl font-bold text-pink-500">jwt:</h2>
-      <div class="text-ellipsis overflow-hidden">
+      <div class="text-ellipsis overflow-hidden dark:text-gray-300">
         <p>{{ jwt }}</p>
       </div>
       <h2 class="mt-6 text-2xl font-bold text-pink-500">user:</h2>
-      <div class="mt-2 flex flex-col">
+      <div class="mt-2 flex flex-col dark:text-gray-300">
         <div class="flex flex-row">
           <div class="text font-bold">email:</div>
           <div class="pl-4">{{ user.email }}</div>
