@@ -24,6 +24,8 @@ try {
   `;
   const res2 = await client2.query(query2);
   console.log(res2.data.data)
+  client.close();
+  client2.close();
 } catch(err) {
   console.log(err)  
 }

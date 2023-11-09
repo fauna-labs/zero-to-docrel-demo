@@ -18,8 +18,8 @@ try {
     }
   `;
   const res = await client.query(query);
-
   console.log(res.data.data);
+  client.close();
 } catch (err) {
   console.log(err)
 }
