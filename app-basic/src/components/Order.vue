@@ -163,7 +163,8 @@ export default {
           `${import.meta.env.VITE_APP_APIGATEWAYURL}/products`, {
             method: 'GET'
         });
-        this.products = await res.json();
+        const j = await res.json();
+        this.products = j.data;
       } catch(e) {
         alert(e);
         this.loadingProducts = false;

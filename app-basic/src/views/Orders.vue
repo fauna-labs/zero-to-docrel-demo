@@ -128,7 +128,7 @@ export default {
           }
         })
         .then(data => {
-          data = data.map(x => {
+          data = data.data.map(x => {
             const cart = x.orderProducts;
             let total = 0;
             for (const p of cart) {

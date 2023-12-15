@@ -28,9 +28,9 @@ const createOrder: Handler = async (event: any, context: Context, callback: Call
       let cart = ${body.orderProducts}
 
       cart.forEach(x=>{
-        let p = product.byId(x.productId)
+        let p = product.byId(x.productId)!
         if (x.quantity > p.quantity) {
-          abort(p.name + " does not have enough stock to fullfill qty: " + x.quantity)
+          abort(p.name + " does not have enough stock to fullfill qty: " + x.quantity.toString())
         } else {
           let updatedQty = p.quantity - x.quantity
           p.update({
@@ -58,11 +58,17 @@ const createOrder: Handler = async (event: any, context: Context, callback: Call
         orderProducts
       }
     `  
+
+    const t1 = Date.now();    
     const res: QuerySuccess<any> = await db.query(query);
+    const t2 = Date.now();
     db.close();
 
     let order: any = res.data;
-    response.body = JSON.stringify(order);
+    response.body = JSON.stringify({
+      data: order,
+      time: (t2-t1)/1000
+    });
   } catch (err: any) {
     response.statusCode = err.httpStatus;
     response.body = err.abort ? err.abort : err.message;
@@ -100,9 +106,14 @@ const getOrders: Handler = async (event: any, context: Context, callback: Callba
         }
       })
     `  
+    const t1 = Date.now();    
     const res: QuerySuccess<any> = await db.query(query);
+    const t2 = Date.now();
     db.close();
-    response.body = JSON.stringify(res.data.data);    
+    response.body = JSON.stringify({
+      data: res.data.data,
+      time: (t2-t1)/1000
+    });    
   } catch (err: any) {
     response.statusCode = err.httpStatus;
     response.body = err.message;

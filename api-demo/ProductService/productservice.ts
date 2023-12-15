@@ -45,10 +45,16 @@ const createProduct: Handler = async (event: any, context: Context, callback: Ca
         backordered
       }
     `  
+    const t1 = Date.now();    
     const res: QuerySuccess<any> = await db.query(query);
+    const t2 = Date.now();
     db.close();
+
     let product: any = res.data;
-    response.body = JSON.stringify(product);
+    response.body = JSON.stringify({
+      data: product,
+      time: (t2 - t1)/1000
+    });
   } catch (err: any) {
     response.statusCode = err.httpStatus;
     response.body = err.message;
@@ -67,7 +73,7 @@ const getProducts: Handler = async (event: any, context: Context, callback: Call
     const db = new Client({
       secret: FAUNA_API_KEY
     });
-  
+
     const query = fql`
       product.all() {
         id,
@@ -80,10 +86,16 @@ const getProducts: Handler = async (event: any, context: Context, callback: Call
         backordered
       }
     `  
+
+    const t1 = Date.now();    
     const res: QuerySuccess<any> = await db.query(query);
+    const t2 = Date.now()
     db.close();
 
-    response.body = JSON.stringify(res.data.data)
+    response.body = JSON.stringify({
+      data: res.data.data,
+      time: (t2 - t1)/1000
+    })
 
   } catch (err: any) {
     response.statusCode = err.httpStatus;

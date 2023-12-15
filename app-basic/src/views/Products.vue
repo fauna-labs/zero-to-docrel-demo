@@ -122,7 +122,7 @@ export default {
           }
         })
         .then(data => {
-          this.products = data;
+          this.products = data.data;
           this.progress = false;
         })
         .catch(e => {
