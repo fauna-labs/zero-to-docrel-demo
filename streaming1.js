@@ -1,18 +1,30 @@
-import { newConsoleLog } from './utils/newconsolelog.js';
-console.log = newConsoleLog;
+import { Client, fql } from 'fauna'
 import 'dotenv/config';
-import faunadb from 'faunadb';
 
-const client = new faunadb.Client({
-  secret: process.env.FAUNADB_SECRET
+const client = new Client({
+  secret: process.env.FAUNADB_SECRET,
+  endpoint: process.env.FAUNA_ENDPOINT
 });
 
-const q = faunadb.query;
-const { Ref, Collection } = q;
 
-client.stream.document(
-  Ref(Collection("customer"), "101")
-)
-.on('version', v => { console.log(v) })
-.start()
+const stream = client.stream(fql`
+order.all().toStream()
+`)
+stream.start()
 
+try {
+  for await (const event of stream) {
+    let e = event
+    if (event.type != "start") {
+      let data = event.data
+      delete data.ref
+      delete data.coll
+      delete data.ts
+      e = { type: event.type, data: data }  
+    }
+    console.log(JSON.stringify(e)) 
+  }
+} catch (error) {
+  console.error(error)
+  stream.close()
+}

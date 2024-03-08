@@ -17,3 +17,23 @@ collection order {
     terms [.status]
   }
 }
+
+role customerRole {
+  membership customer
+
+  privileges order {
+    read
+  }
+
+  privileges product {
+    read
+  }
+
+  privileges customer {
+    read {
+      predicate (self => {
+        self == Query.identity()
+      })
+    }
+  }
+}

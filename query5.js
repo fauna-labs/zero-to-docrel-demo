@@ -21,10 +21,18 @@ try {
   });
 
   const query2 = fql`
-    order.all()
+    order.all() {
+      name,
+      customer { firstName },
+      orderProducts {
+        product {
+          name
+        }
+      }
+    }
   `;
   const res2 = await client2.query(query2);
-  console.log(res2.data.data)
+  console.log(JSON.stringify(res2.data.data, null, 2))
   client.close();
   client2.close();
 } catch(err) {
