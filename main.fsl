@@ -1,0 +1,19 @@
+collection customer {
+  history_days 0
+}
+
+collection store {
+  history_days 0
+}
+
+collection product {
+  history_days 0
+}
+
+collection order {
+  history_days 0
+
+  index byStatus {
+    terms [.status]
+  }
+}

@@ -3,7 +3,8 @@ import 'dotenv/config';
 import { customers, stores, products, orders} from './data.js';
 
 const client = new Client({
-  secret: process.env.FAUNADB_SECRET
+  secret: process.env.FAUNADB_SECRET,
+  endpoint: process.env.FAUNA_ENDPOINT
 });
 
 async function createDocument(collection, data) {  

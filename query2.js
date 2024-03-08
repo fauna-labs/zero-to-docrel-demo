@@ -3,6 +3,7 @@ import { Client, fql } from "fauna";
 
 const client = new Client({
   secret: process.env.FAUNADB_SECRET,
+  endpoint: process.env.FAUNA_ENDPOINT
 });
 
 const customerId = "101";
