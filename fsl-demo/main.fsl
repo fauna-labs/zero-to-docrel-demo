@@ -8,6 +8,23 @@ collection store {
 
 collection product {
   history_days 0
+
+  index byName {
+    terms [.name]
+  }
+  unique [.name]
+
+  check notNegativeQty(.quantity >= 0)
+
+  compute backordered = (
+    x => {
+      if (x.quantity < x.backorderedLimit) {
+        true
+      } else {
+        false
+      }
+    }
+  )
 }
 
 collection order {

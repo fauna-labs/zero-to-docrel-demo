@@ -21,7 +21,6 @@ router.get('/products', async (request, env, context) => {
         backorderedLimit,
         backordered
       }
-      abort('foo')
     `)
     return new Response(JSON.stringify(res.data), {
       status: 200,
@@ -51,16 +50,14 @@ router.post('/product', async (request, env, context) => {
     
     let res = await client.query(fql`
       product.create({
-        'sku': ${body.sku},
         'name': ${body.name},
         'description': ${body.description},
+        'store': store.byId(${body.storeId}),
         'price': ${body.price},
         'quantity': ${body.quantity},
-        'backorderedLimit': ${body.backorderedLimit},
-        'backordered': ${body.quantity < body.backorderedLimit ? true : false}
+        'backorderedLimit': ${body.backorderedLimit}
       }) {
         objectID: .id,
-        sku,
         name,
         description,
         price,
@@ -147,8 +144,7 @@ router.post('/order', async (request, env, context) => {
         } else {
           let updatedQty = p.quantity - x.quantity
           p.update({
-            quantity: updatedQty,
-            backordered: if (updatedQty < p.backorderedLimit) true else false
+            quantity: updatedQty
           })
         }
       })

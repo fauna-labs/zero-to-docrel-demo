@@ -22,8 +22,7 @@ try {
         abort("Insufficient stock for product " + p.name + ": Requested quantity=" + x.quantity.toString())
       } else {
         p.update({
-          quantity: updatedQty,
-          backordered: p.backorderedLimit > updatedQty
+          quantity: updatedQty
         })
       }
     })
