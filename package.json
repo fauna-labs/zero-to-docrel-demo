@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.1",
-    "fauna": "^1.3.1",
+    "fauna": "^1.4.0-beta.0",
     "serverless-offline": "^13.2.0"
   },
   "type": "module"
