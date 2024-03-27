@@ -8,7 +8,7 @@ const client = new Client({
 
 
 const stream = client.stream(fql`
-order.where(.status=="active").toStream()
+order.where(.status=="active" || .status=="processing").toStream()
 `)
 
 try {
