@@ -6,10 +6,17 @@ const client = new Client({
   endpoint: process.env.FAUNA_ENDPOINT
 });
 
+const res = await client.query(fql`
+  let set = order.where(.status=="active" || .status=="processing")
+  {
+    initialPage: set.pageSize(10),
+    streamToken: set.toStream()    
+  }
+`);
 
-const stream = client.stream(fql`
-order.where(.status=="active" || .status=="processing").toStream()
-`)
+const { initialPage, streamToken } = res.data;
+
+const stream = client.stream(streamToken);
 
 try {
   for await (const event of stream) {
