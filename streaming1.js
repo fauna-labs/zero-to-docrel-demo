@@ -10,7 +10,6 @@ const client = new Client({
 const stream = client.stream(fql`
 order.where(.status=="active").toStream()
 `)
-stream.start()
 
 try {
   for await (const event of stream) {
